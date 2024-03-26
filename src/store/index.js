@@ -7,17 +7,17 @@ import axios from "axios";
 const initialTodoState = [
   {
     id: 0,
-    textInputValue: "Se calcifier la glande pinéale",
+    textInputValue: "ToDo 1",
     checkBoxValue: true,
   },
   {
     id: 1,
-    textInputValue: "Se calcifier la glande pinéale",
+    textInputValue: "ToDo 2",
     checkBoxValue: false,
   },
   {
     id: 2,
-    textInputValue: "Apprtendre le nolm des fleurs",
+    textInputValue: "ToDo 3",
     checkBoxValue: false,
   },
 ];

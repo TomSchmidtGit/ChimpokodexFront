@@ -3,32 +3,44 @@ import logo from "./logo.svg";
 import "./App.css";
 import { ThemeProvider, styled } from "styled-components";
 import { InputText, Clock, Section, Heading } from "./components/atoms";
-import { FaCarrot, FaLemon, FaPepperHot } from "react-icons/fa";
+import { FaPlus, FaTrash, FaPen } from "react-icons/fa";
 import { Menu } from "./components/organisms";
+import { LoginForm, ChimpokodexTable } from "./components/organisms";
 import { MenuButton, NightModeSwitch } from "./components/molecules";
 import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 import HttpExample from "./components/atoms/HttpExample/HttpExample";
 import { NightModeProvider } from "./contexts";
 import TodoList from "./components/organisms/TodoList/TodoList";
-import TodoListCopy from "./components/organisms/TodoListCopy/TodoListCopy.jsx";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import Playlist from "./components/organisms/Playlist/Playlist";
+
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker.register('/service-worker.js').then(registration => {
+//       console.log('SW registered: ', registration);
+//     }).catch(registrationError => {
+//       console.log('SW registration failed: ', registrationError);
+//     });
+//   });
+// }
+
+
 const menuData = [
   {
-    icon: <FaPepperHot></FaPepperHot>,
-    text: "Chili",
-    slug: "chili",
+    icon: <FaPlus />,
+    text: "Chimpokodex",
+    slug: "chimpokodex",
   },
   {
-    icon: <FaCarrot></FaCarrot>,
-    text: "Carrot",
-    slug: "carrot",
+    icon: <FaPen></FaPen>,
+    text: "Edit",
+    slug: "Edit",
   },
   {
-    icon: <FaLemon></FaLemon>,
-    text: "Lemon",
-    slug: "lemon",
+    icon: <FaTrash></FaTrash>,
+    text: "Delete",
+    slug: "Delete",
   },
 ];
 
@@ -44,66 +56,79 @@ const day = {
 
 const StyledAppContainer = styled.div`
   background: ${(props) => props.theme.secondary};
-  height: 100vh;
+  height: 300vh;
   width: 100vw;
 `;
 
 function App() {
   const [page, setPage] = useState("chili");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isNightMode, setIsNightMode] = useState(true);
   const invert = () => (isNightMode ? night : day);
+  const [chimpokodexData, setChimpokodexData] = useState([]);
+
+  const fetchChimpokodexData = async () => {
+    try {
+        const response = await fetch('http://localhost:8000/api/chimpokodex');
+        const data = await response.json();
+        setChimpokodexData(data); // Stockez les données dans l'état
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données:', error);
+    }
+};
+
+const handleMenuClick = (slug) => {
+  setPage(slug);
+  if (slug === "chimpokodex") {
+    fetchChimpokodexData();
+  }
+  // Ajoutez d'autres conditions ici pour d'autres éléments de menu si nécessaire
+};
+
+
   const handleNightMode = () => {
     setIsNightMode(!isNightMode);
   };
+  
   const renderPage = () => {
     switch (page) {
-      case "carrot":
-        return (
-          <div>
-            <Clock />
-          </div>
-        );
-        break;
-      case "lemon":
-        return <Playlist>Lemon</Playlist>;
-        break;
-
+      case "Edit":
+        return <div><Clock /></div>;
+      case "Delete":
+        return <Playlist />;
+      case "chimpokodex":
+        return <ChimpokodexTable />;
       default:
-      case "chili":
-        return <div>Chilly</div>;
-        break;
+        return <TodoList />;
     }
   };
+  
 
   const handler = (pageName) => {
     setPage(pageName);
   };
 
+
   return (
     <Provider store={store}>
       <ThemeProvider theme={invert(isNightMode)}>
-        <NightModeProvider
-          value={{
-            changeNightMode: () => {
-              setIsNightMode(!isNightMode);
-            },
-            nightMode: isNightMode,
-          }}
-        >
+        <NightModeProvider value={{ changeNightMode: () => setIsNightMode(!isNightMode), nightMode: isNightMode }}>
           <StyledAppContainer>
-            <HttpExample></HttpExample>
-            <Menu data={menuData} handler={handler}>
-              <NightModeSwitch></NightModeSwitch>
-            </Menu>
-            <TodoList></TodoList>
-            <TodoListCopy></TodoListCopy>
-            <InputText />
-            {renderPage()}
+            {isAuthenticated && (
+              <>
+                <Menu data={menuData} handler={handler}>
+                  <NightModeSwitch></NightModeSwitch>
+                </Menu>
+                {renderPage()}
+              </>
+            )}
+            {!isAuthenticated && <LoginForm onLoginSuccess={() => setIsAuthenticated(true)} />}
           </StyledAppContainer>
         </NightModeProvider>
       </ThemeProvider>
     </Provider>
   );
+
 }
 
 export default App;
