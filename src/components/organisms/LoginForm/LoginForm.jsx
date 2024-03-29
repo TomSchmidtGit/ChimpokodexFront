@@ -24,7 +24,6 @@ const LoginForm = ({ onLoginSuccess }) => {
             if (data.token) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('refresh_token', data.refresh_token);
-                console.log(data.token, data.refresh_token);
                 onLoginSuccess();
             } else {
                 console.error('Échec de la connexion');

@@ -1,28 +1,11 @@
 import React, { useState, useEffect } from 'react';
-
-const TableCell = ({ children }) => <td>{children}</td>;
-
-const TableRow = ({ chimpokodex, onEdit, onDelete }) => {
-    return (
-        <tr>
-            <TableCell>{chimpokodex.id}</TableCell>
-            <TableCell>{chimpokodex.name}</TableCell>
-            <TableCell>{chimpokodex.pvMax}</TableCell>
-            <TableCell>
-                <button onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(chimpokodex);
-                }}>Modifier</button>
-                <button onClick={() => onDelete(chimpokodex)}>Supprimer</button>
-            </TableCell>
-        </tr>
-    );
-};
-
+import { Button } from '../../atoms';
+import { Table, EditForm, CreateForm } from '../../molecules';
 
 const ChimpokodexTable = () => {
     const [data, setData] = useState([]);
     const [selectedChimpokodex, setSelectedChimpokodex] = useState(null);
+    const [isCreating, setIsCreating] = useState(false);
 
     const fetchChimpokodexData = async () => {
         const token = localStorage.getItem('token');
@@ -46,14 +29,36 @@ const ChimpokodexTable = () => {
         fetchChimpokodexData();
     }, []);
 
+    const handleCreate = async (chimpokomonData) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch('http://localhost:8000/api/chimpokodex', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(chimpokomonData),
+            });
+
+            if (!response.ok) throw new Error('Erreur lors de la création du Chimpokodex');
+            alert('Chimpokomon créé avec succès');
+            fetchChimpokodexData();
+            setIsCreating(false);
+        } catch (error) {
+            console.error('Erreur lors de la création:', error);
+        }
+    };
+
     const handleEditChimpokodex = (chimpokodex) => {
         setSelectedChimpokodex(chimpokodex);
+        fetchChimpokodexData();
     };
 
     const handleEditSubmit = async (event) => {
-        event.preventDefault();
+        console.log("EditSubmit launched");
 
-        const updatedPvMax = parseInt(selectedChimpokodex.pvMax, 10);
+        const updatedPvMax = parseInt(event.pvMax, 10);
 
         if (isNaN(updatedPvMax)) {
             alert('PV Max doit être un nombre valide.');
@@ -69,7 +74,7 @@ const ChimpokodexTable = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: selectedChimpokodex.name,
+                    name: event.name,
                     pvMax: updatedPvMax,
                 })
             });
@@ -100,47 +105,36 @@ const ChimpokodexTable = () => {
             });
 
             if (!response.ok) throw new Error('Erreur lors de la suppression du Chimpokodex');
-
             alert('Chimpokodex supprimé avec succès');
-            setData(prevData => prevData.filter(item => item.id !== chimpokodex.id));
+            fetchChimpokodexData();
+            setData(prevData => data.filter(item => item.id !== chimpokodex.id));
         } catch (error) {
             console.error('Erreur lors de la suppression:', error);
         }
     };
 
     return (
-        <>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>PV Max</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((chimpokodex) => (
-                        <TableRow key={chimpokodex.id} chimpokodex={chimpokodex} onEdit={handleEditChimpokodex} onDelete={handleDeleteChimpokodex} />
-                    ))}
-                </tbody>
-            </table>
-            {selectedChimpokodex && (
-                <form onSubmit={handleEditSubmit}>
-                    <input
-                        type="text"
-                        value={selectedChimpokodex.name}
-                        onChange={(e) => setSelectedChimpokodex({ ...selectedChimpokodex, name: e.target.value })}
-                    />
-                    <input
-                        type="text"
-                        value={selectedChimpokodex.pvMax}
-                        onChange={(e) => setSelectedChimpokodex({ ...selectedChimpokodex, pvMax: e.target.value })}
-                    />
-                    <button type="submit">Valider les modifications</button>
-                </form>
+        <div>
+            {!isCreating && !selectedChimpokodex && (
+                <>
+                    <Button onClick={() => setIsCreating(true)} text="Créer un Chimpokomon" />
+                    <Table data={data} onEdit={handleEditChimpokodex} onDelete={handleDeleteChimpokodex} />
+                </>
             )}
-        </>
+            {isCreating && (
+                <CreateForm
+                    onCreate={handleCreate}
+                    onCancel={() => setIsCreating(false)}
+                />
+            )}
+            {selectedChimpokodex && (
+                <EditForm
+                    selectedChimpokodex={selectedChimpokodex}
+                    onUpdate={handleEditSubmit}
+                    onCancel={() => setSelectedChimpokodex(null)}
+                />
+            )}
+        </div>
     );
 };
 
