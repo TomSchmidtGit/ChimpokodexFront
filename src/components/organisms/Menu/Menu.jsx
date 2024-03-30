@@ -2,9 +2,9 @@ import React from "react";
 import { Card } from "../../atoms";
 import { MenuButton } from "../../molecules";
 
-const Menu = ({ handler, data, ...props }) => {
+const Menu = ({ handler, data, isItemSelected, ...props }) => {
   return (
-    <Card height='40px'>
+    <Card isItemSelected={isItemSelected}>
       {data.map((x, i) => {
         let { icon, text, slug } = x;
         return (

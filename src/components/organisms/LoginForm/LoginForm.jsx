@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
 import { InputText, Button } from "../../atoms";
+import styled from 'styled-components';
+
+const StyledLoginForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background-color: ${props => props.theme.background};
+  color: ${(props) => (props.color ? props.color : props.theme.primary)};
+  padding: 20px;
+  border-radius: 8px;
+`;
 
 const LoginForm = ({ onLoginSuccess }) => {
     const [username, setUsername] = useState('');
@@ -39,7 +51,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     
 
     return (
-        <form onSubmit={handleSubmit}>
+        <StyledLoginForm onSubmit={handleSubmit}>
             <InputText
                 type="text"
                 value={username}
@@ -53,7 +65,7 @@ const LoginForm = ({ onLoginSuccess }) => {
                 placeholder="Mot de passe"
             />
             <Button text="Connexion" type="submit"></Button>
-        </form>
+        </StyledLoginForm>
     );
 };
 

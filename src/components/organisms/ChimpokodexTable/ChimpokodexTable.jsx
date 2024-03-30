@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../atoms';
 import { Table, EditForm, CreateForm } from '../../molecules';
+import styled from 'styled-components';
+
+const ChimpokodexTableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: ${props => props.theme.background};
+  color: ${(props) => (props.color ? props.color : props.theme.primary)};
+  padding: 20px;
+  margin-top: 60px;
+`;
 
 const ChimpokodexTable = () => {
     const [data, setData] = useState([]);
@@ -19,6 +30,7 @@ const ChimpokodexTable = () => {
             });
             if (!response.ok) throw new Error('Erreur lors de la récupération des données');
             const newData = await response.json();
+            localStorage.setItem('chimpokodexData', JSON.stringify(newData));
             setData(newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données:', error);
@@ -26,7 +38,16 @@ const ChimpokodexTable = () => {
     };
 
     useEffect(() => {
-        fetchChimpokodexData();
+        const loadChimpokodexData = async () => {
+            const cachedData = localStorage.getItem('chimpokodexData');
+            if (cachedData) {
+                setData(JSON.parse(cachedData));
+            } else {
+                await fetchChimpokodexData();
+            }
+        };
+    
+        loadChimpokodexData();
     }, []);
 
     const handleCreate = async (chimpokomonData) => {
@@ -43,6 +64,7 @@ const ChimpokodexTable = () => {
 
             if (!response.ok) throw new Error('Erreur lors de la création du Chimpokodex');
             alert('Chimpokomon créé avec succès');
+            console.log("Fetch effectué");
             fetchChimpokodexData();
             setIsCreating(false);
         } catch (error) {
@@ -114,7 +136,7 @@ const ChimpokodexTable = () => {
     };
 
     return (
-        <div>
+        <ChimpokodexTableContainer>
             {!isCreating && !selectedChimpokodex && (
                 <>
                     <Button onClick={() => setIsCreating(true)} text="Créer un Chimpokomon" />
@@ -134,7 +156,7 @@ const ChimpokodexTable = () => {
                     onCancel={() => setSelectedChimpokodex(null)}
                 />
             )}
-        </div>
+        </ChimpokodexTableContainer>
     );
 };
 

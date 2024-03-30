@@ -3,7 +3,13 @@ import { Button } from '../../atoms';
 import styled from 'styled-components';
 
 const StyledTable = styled.table`
-color: ${(props) => (props.color ? props.color : props.theme.primary)}
+  border-collapse: collapse;
+  width: 100%;
+  th, td {
+    border: 1px solid ${props => props.theme.primary};
+    padding: 8px;
+    text-align: left;
+  }
 `;
 const TableCell = ({ children }) => <td>{children}</td>;
 
@@ -18,8 +24,8 @@ const TableRow = ({ chimpokodex, onEdit, onDelete }) => {
                     e.stopPropagation();
                     onEdit(chimpokodex);
                 }}text = "Modifier"></Button>
-                <Button onClick={() => onDelete(chimpokodex)} text="Supprimer"></Button>
             </TableCell>
+            <TableCell><Button onClick={() => onDelete(chimpokodex)} text="Supprimer"></Button></TableCell>
         </tr>
     );
 };
@@ -32,7 +38,8 @@ const Table = ({ data, onEdit, onDelete }) => {
                     <th>ID</th>
                     <th>Nom</th>
                     <th>PV Max</th>
-                    <th>Actions</th>
+                    <th>Modification</th>
+                    <th>Supprimer</th>
                 </tr>
             </thead>
             <tbody>

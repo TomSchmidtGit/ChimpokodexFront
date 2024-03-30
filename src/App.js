@@ -1,9 +1,8 @@
-import React, { useState, useContext, createContext } from "react";
+import React, { useState} from "react";
 import "./App.css";
 import { ThemeProvider, styled } from "styled-components";
-import { FaBook, FaGamepad} from "react-icons/fa";
-import { Menu } from "./components/organisms";
-import { LoginForm, ChimpokodexTable } from "./components/organisms";
+import { FaBook, FaUsers, FaHome} from "react-icons/fa";
+import { LoginForm, ChimpokodexTable, Menu, ChimpokomonSelector } from "./components/organisms";
 import { NightModeSwitch } from "./components/molecules";
 import { NightModeProvider } from "./contexts";
 import { Provider } from "react-redux";
@@ -11,14 +10,19 @@ import { store } from "./store";
 
 const menuData = [
   {
+    icon: <FaHome />,
+    text: "",
+    slug: "home",
+  },
+  {
     icon: <FaBook />,
     text: "Consulter le Chimpokodex",
     slug: "chimpokodex",
   },
   {
-    icon: <FaGamepad />,
-    text: "Jouer",
-    slug: "play",
+    icon: <FaUsers />,
+    text: "Composer votre équipe",
+    slug: "team",
   },
 ];
 
@@ -34,22 +38,25 @@ const day = {
 
 const StyledAppContainer = styled.div`
   background: ${(props) => props.theme.secondary};
-  height: 300vh;
-  width: 100vw;
+  min-height: 100vh;
+  width: 100%;
 `;
 
 function App() {
   const [page, setPage] = useState();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isNightMode, setIsNightMode] = useState(true);
+  const [isItemSelected, setIsItemSelected] = useState(false);
   const invert = () => (isNightMode ? night : day);
   
   const renderPage = () => {
     switch (page) {
+      case "home":
+        return;
       case "chimpokodex":
         return <ChimpokodexTable />;
-      case "play":
-        return;
+      case "team":
+        return <ChimpokomonSelector />;
       default:
         return;
     }
@@ -57,6 +64,7 @@ function App() {
   
   const handler = (pageName) => {
     setPage(pageName);
+    setIsItemSelected(pageName !== "home");
   };
 
   return (
@@ -66,7 +74,7 @@ function App() {
           <StyledAppContainer>
             {isAuthenticated && (
               <>
-                <Menu data={menuData} handler={handler}>
+                <Menu data={menuData} handler={handler} isItemSelected={isItemSelected}>
                   <NightModeSwitch></NightModeSwitch>
                 </Menu>
                 {renderPage()}
