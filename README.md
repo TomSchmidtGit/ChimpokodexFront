@@ -1,28 +1,8 @@
-## Configuration de l'environnement
+## Mise en place :
 
-Avant de démarrer le projet, assurez-vous que votre système est à jour et que les services nécessaires sont configurés et en cours d'exécution.
-
-Voici les étapes à suivre :
-
-### Mise à jour du système
-
-Il est recommandé de mettre à jour la liste des paquets et leurs versions sur votre machine. Ouvrez un terminal et exécutez les commandes suivantes :
+Lancer le server :
 ```bash
-sudo apt update
-sudo apt upgrade
+npm start
 ```
 
-### Mise en place :
-
-Lancer le service Apache2 (penser à le fermer après utilisation), se positionner dans le bon dossier puis lancer le serveur
-```bash
-sudo service apache2 start
-cd chemin/vers/votre/projet
-symfony serve
-```
-
-Le serveur se lancera sur le port 8000 du localhost.
-
-### Documentation :
-
-Les routes de l'API sont consultables une fois le serveur lancé via http://localhost:8000/api/doc
+L'application devrait s'ouvrir sur le port 300 du localhost (URL fourni par l'invite de commande).
