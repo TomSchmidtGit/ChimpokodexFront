@@ -1,5 +1,4 @@
 import React, { useState} from "react";
-import "./App.css";
 import { ThemeProvider, styled } from "styled-components";
 import { FaBook, FaUsers, FaHome} from "react-icons/fa";
 import { LoginForm, ChimpokodexTable, Menu, ChimpokomonSelector } from "./components/organisms";
@@ -16,12 +15,12 @@ const menuData = [
   },
   {
     icon: <FaBook />,
-    text: "Consulter le Chimpokodex",
+    text: " Consulter le Chimpokodex",
     slug: "chimpokodex",
   },
   {
     icon: <FaUsers />,
-    text: "Composer votre équipe",
+    text: " Composer votre équipe",
     slug: "team",
   },
 ];

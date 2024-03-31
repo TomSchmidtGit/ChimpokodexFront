@@ -5,6 +5,8 @@ import styled from 'styled-components';
 const StyledTable = styled.table`
   border-collapse: collapse;
   width: 100%;
+  padding: 20px;
+  margin: 10px 0;
   th, td {
     border: 1px solid ${props => props.theme.primary};
     padding: 8px;
