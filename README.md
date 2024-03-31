@@ -1,8 +1,19 @@
-## Mise en place :
+# Cloner le dépôt
+```bash
+git clone https://yourproject.git
+```
 
-Lancer le server :
+# Aller dans le répertoire du projet
+```bash
+cd yourproject
+```
+
+# Installer les dépendances
+```bash
+npm install
+```
+
+# Lancer l'application
 ```bash
 npm start
 ```
-
-L'application devrait s'ouvrir sur le port 300 du localhost (URL fourni par l'invite de commande).
